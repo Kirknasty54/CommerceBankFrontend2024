@@ -63,11 +63,25 @@
     border: none;
     border-radius: 30px;
     cursor: pointer;
-
 }
 
 .login-button:active {
     background-color: #00583e;
+}
+
+.register-button{
+  width: 100%;
+  margin-top: 30px;
+  padding: 15px;
+  background-color: #016749;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.register-button:active{
+  background-color: #00583e;
 }
 
 .error-message {

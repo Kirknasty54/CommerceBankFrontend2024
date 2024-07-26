@@ -1,5 +1,4 @@
 // Verify login information then create a session (probably through local storage)
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Login.css';
@@ -64,6 +63,7 @@ function Login() {
                         />
                     </div>
                     <button type="submit" className="login-button">Login</button>
+                    <button type="submit" className="register-button">Register</button>
                 </form>
             </div>
         </div>
