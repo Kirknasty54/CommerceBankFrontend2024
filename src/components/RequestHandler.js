@@ -9,6 +9,12 @@ const isMock = true;
 async function RequestHandler(route, data) {
 
     switch (route) {
+        case 'check':
+            if (!isMock){
+                const response = await axios.post('http://localhost:8080/api/v1/users/check', {
+                  username: data.username
+                });
+            }
         case 'auth':
             if (!isMock) {
                 if (data.username === 'user' && data.password === 'pass') {
@@ -21,7 +27,7 @@ async function RequestHandler(route, data) {
                     return { authenticated: false, isAdmin: false, applications: [] }
 
             } else {
-                const response = await axios.post('http://localhost:80/api/v1/users/auth', {
+                const response = await axios.post('http://localhost:8080/api/v1/users/auth', {
                     username: data.username,
                     password: data.password
                 });
@@ -44,7 +50,7 @@ async function RequestHandler(route, data) {
             } else {
 
                 if (data.isAdmin) {
-                    const response = await axios.get(`http://localhost:80/api/v1/servers`);
+                    const response = await axios.get(`http://localhost:8080/api/v1/servers`);
                     console.log(response.data)
                     let finalData = { servers: [] }
                     for (const server of response.data) {
@@ -63,7 +69,7 @@ async function RequestHandler(route, data) {
                     // return response.data;
 
                 } else {
-                    const response = await axios.get(`http://localhost:80/api/v1/servers/${data.uid}`);
+                    const response = await axios.get(`http://localhost:8080/api/v1/servers/${data.uid}`);
                     let finalData = { servers: [] }
                     for (const server of response.data) {
                         finalData.servers.push({
@@ -87,7 +93,7 @@ async function RequestHandler(route, data) {
                 return { status: true }
             } else {
                 console.log(data)
-                const response = await axios.post('http://localhost:80/api/v1/servers/add', {
+                const response = await axios.post('http://localhost:8080/api/v1/servers/add', {
                     sid: data.id,
                     destinationHostName: data.name,
                     appInfoId: data.application.appId,
@@ -117,7 +123,7 @@ async function RequestHandler(route, data) {
                 }
             } else {
                 console.log(data)
-                const response = await axios.post('http://localhost:80/api/v1/appInfo/add', data.application)
+                const response = await axios.post('http://localhost:8080/api/v1/appInfo/add', data.application)
 
 
                 const parsedResponse = {};
@@ -133,7 +139,7 @@ async function RequestHandler(route, data) {
                 }
             } else {
                 console.log(data.application)
-                const response = await axios.delete(`http://localhost:80/api/v1/appInfo/delete/${data.application.appId}`)
+                const response = await axios.delete(`http://localhost:8080/api/v1/appInfo/delete/${data.application.appId}`)
                 const parsedResponse = {};
                 return response.data;
             }
@@ -148,7 +154,7 @@ async function RequestHandler(route, data) {
 
             } else {
                 if (data.isAdmin) {
-                    const response = await axios.get('http://localhost:80/api/v1/users')
+                    const response = await axios.get('http://localhost:8080/api/v1/users')
                     const parsedResponse = {};
 
                     return response.data;
@@ -160,7 +166,7 @@ async function RequestHandler(route, data) {
                 return { status: true }
             } else {
                 if (data.isAdmin) {
-                    const response = await axios.post('http://localhost:80/api/v1/userapps/modifyusers', {
+                    const response = await axios.post('http://localhost:8080/api/v1/userapps/modifyusers', {
                         uid: data.id,
                         application: data.applications, //  [{appId, createdAt, createdBy, modifiedAt, modifiedAt, modifiedBy, user_apps_uid (Date.now()) }, ...{}]
                     })
@@ -178,7 +184,7 @@ async function RequestHandler(route, data) {
                 return { status: true }
             } else {
                 if (data.isAdmin) {
-                    const response = await axios.post('http://localhost:80/api/v1/userapps/add', {
+                    const response = await axios.post('http://localhost:8080/api/v1/userapps/add', {
                         uid: data.id,
                         application: [data.application], //  [{appId, createdAt, createdBy, modifiedAt, modifiedAt, modifiedBy, user_apps_uid (Date.now()) }, ...{}]
                     })
@@ -201,7 +207,7 @@ async function RequestHandler(route, data) {
                     //     uid: data.id,
                     //     appInfoId: data.appInfoId,
                     // })
-                    const response = await axios.delete(`http://localhost:80/api/v1/userapps/delete/${data.id}/${data.appInfoId}`);
+                    const response = await axios.delete(`http://localhost:8080/api/v1/userapps/delete/${data.id}/${data.appInfoId}`);
                     console.log({
                         uid: data.id,
                         appInfoId: data.appInfoId,
@@ -216,11 +222,15 @@ async function RequestHandler(route, data) {
             if (!isMock) {
                 return { status: true }
             } else {
-                const response = await axios.delete(`http://localhost:80/api/v1/servers/delete/${data.id}`);
+                const response = await axios.delete(`http://localhost:8080/api/v1/servers/delete/${data.id}`);
                 const parsedResponse = {}; // parse response data to match mock form
 
                 return response.data;
             }
+        case 'register':
+          if(!isMock){
+            
+        }
     }
 }
 

@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import './styles/index.css';
 import Dashboard from './screens/Dashboard';
 import Login from './screens/Login';
+import Register from './screens/Register.js'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
     path: "login",
     element: <Login />
   },
+  {
+    path: "register",
+    element: <Register/>
+  }
 ]);
 
 createRoot(document.getElementById("root")).render(
