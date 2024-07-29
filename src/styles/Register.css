@@ -1,0 +1,38 @@
+.register-page{
+  background-color: #F3F3F3;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    /* background-color: #f8f9fa; */
+
+}
+
+.brand-logo {
+    margin-left: 15px;
+    margin-top: -5px;
+
+    /* Add your branding styles here */
+    width: 250px;
+    height: 58px;
+}
+
+.git-icon{
+  margin-left: 15px;
+  margin-top: -15px;
+
+  width: 50px;
+  height: -10px;
+  padding-right: 10px;
+  cursor: pointer;
+}
