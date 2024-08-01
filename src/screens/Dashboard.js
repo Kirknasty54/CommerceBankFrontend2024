@@ -14,6 +14,8 @@ import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons'
 import logo from '../images/commercelogo.png';
 import ServerItem from '../components/ServerItem';
 import RequestHandler from '../components/RequestHandler';
+import '../styles/LoadingSpinner.css'
+import LoadingSpinner from './LoadingSpinner'
 
 const possibleApplications = ['API', 'PUP', 'RFS', 'TBD', 'INF', 'TCS', 'MQS'];
 // all the applications the user has access to,is returned in the auth call.
@@ -51,6 +53,7 @@ function Dashboard() {
   const [adminApplications, setApplications] = useState([{ appId: 1, appName: 'API' }, { appId: 2, appName: 'PUP' }, { appId: 3, appName: 'RFS' }, { appId: 4, appName: 'TBD' }, { appId: 5, appName: 'INF' }, { appId: 6, appName: 'TCS' }, { appId: 7, appName: 'MQS' }]); // Example initial apps
   const [selectedApp, setSelectedApp] = useState('');
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   window.remove = RemovePrimedApplication;
   window.add = addPrimedApplication;
@@ -78,9 +81,13 @@ function Dashboard() {
       setNewServerApplication(applications[0].appName);
 
       isAdmin = JSON.parse(localStorage.getItem('admin'));
+      setIsLoading(true);
       RequestHandler('servers', { isAdmin: isAdmin, uid: localStorage.getItem('session') }).then(response => {
         setServers(response.servers)
       })
+        .finally(() => {
+          setIsLoading(false);
+        });
       RequestHandler('auth', { username: localStorage.getItem('username'), password: localStorage.getItem('password') }).then(response => {
         // console.log(response)
         console.log(response)
@@ -324,226 +331,231 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      <nav className="navbar">
-        <img src={logo} className="brand-logo2" alt="logo" />
-        <div onClick={toggleSidebar} className="hamburger-icon">
-          <FontAwesomeIcon fontSize={30} width={50} height={50} icon={faBars} />
-        </div>
-
-      </nav>
-
-      {/* Hamburger Menu */}
-      <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''}`}>
-        <div className="sidebar-item" onClick={() => setIsSidebarOpen(false)}>
-          <FontAwesomeIcon icon={faXmark} /> <span>Close</span>
-        </div>
-        <div className="sidebar-item" onClick={() => openModal()}>
-          <FontAwesomeIcon icon={faServer} /><span>Add New Server</span>
-        </div>
-        {isAdmin && (
-          <div className="sidebar-item" onClick={() => openModalB()}>
-            <FontAwesomeIcon icon={faScrewdriverWrench} /><span>Manage Users</span>
-          </div>
-        )}
-        {isAdmin && (
-          <div className="sidebar-item" onClick={() => openModalC()}>
-            <FontAwesomeIcon icon={faRocket} /><span>Manage Applications</span>
-          </div>
-        )}
-        <div className="sidebar-item" onClick={() => exportData()}>
-          <FontAwesomeIcon icon={faFileArrowDown} /><span>Export</span>
-        </div>
-        <div className="sidebar-item" onClick={() => { localStorage.removeItem("apps"); localStorage.removeItem("session"); localStorage.removeItem("admin"); navigate("/login") }}>
-          <span>Logout</span>
-        </div>
-      </div>
-
-      {/* Application Management Modal */}
-      {isModalCOpen && (
-        <div className="modal-overlay">
-          <div className="modal" style={{ width: "400px" }}>
-            <div className="modal-header">
-              <button className="close-btn" onClick={closeModal}>X</button>
+      {isLoading && <LoadingSpinner />}
+      {!isLoading && (
+        <>
+          <nav className="navbar">
+            <img src={logo} className="brand-logo2" alt="logo" />
+            <div onClick={toggleSidebar} className="hamburger-icon">
+              <FontAwesomeIcon fontSize={30} width={50} height={50} icon={faBars} />
             </div>
-            <div className='modal-content'>
-              <span>Manage Applications</span>
-              <div className='button-block'>
-                <button
-                  onClick={() => toggleMode('add')}
-                  className={`mode-button ${mode === 'add' ? 'green' : ''}`}
-                >Add</button>
-                <button
-                  onClick={() => toggleMode('delete')}
-                  className={`mode-button ${mode === 'delete' ? 'red' : ''}`}
-                >Delete</button>
+
+          </nav>
+
+          {/* Hamburger Menu */}
+          <div className={`sidebar ${isSidebarOpen ? 'sidebar-open' : ''}`}>
+            <div className="sidebar-item" onClick={() => setIsSidebarOpen(false)}>
+              <FontAwesomeIcon icon={faXmark} /> <span>Close</span>
+            </div>
+            <div className="sidebar-item" onClick={() => openModal()}>
+              <FontAwesomeIcon icon={faServer} /><span>Add New Server</span>
+            </div>
+            {isAdmin && (
+              <div className="sidebar-item" onClick={() => openModalB()}>
+                <FontAwesomeIcon icon={faScrewdriverWrench} /><span>Manage Users</span>
               </div>
-              {(mode === 'add' || adminApplications.length < 1) && (
-                <div className='modal-block-app'>
-                  <input
-                    type="text"
-                    value={newAppName}
-                    onChange={(e) => setNewAppName(e.target.value)}
-                    maxLength="3"
-                    placeholder='APP...'
-                    style={{ textTransform: "uppercase" }}
-                  />
-                  <div className='arrow-up-button' onClick={addApp}>
-                    <FontAwesomeIcon fontSize={29} width={50} height={50} icon={faCircleUp} />
-                  </div>
+            )}
+            {isAdmin && (
+              <div className="sidebar-item" onClick={() => openModalC()}>
+                <FontAwesomeIcon icon={faRocket} /><span>Manage Applications</span>
+              </div>
+            )}
+            <div className="sidebar-item" onClick={() => exportData()}>
+              <FontAwesomeIcon icon={faFileArrowDown} /><span>Export</span>
+            </div>
+            <div className="sidebar-item" onClick={() => { localStorage.removeItem("apps"); localStorage.removeItem("session"); localStorage.removeItem("admin"); navigate("/login") }}>
+              <span>Logout</span>
+            </div>
+          </div>
+
+          {/* Application Management Modal */}
+          {isModalCOpen && (
+            <div className="modal-overlay">
+              <div className="modal" style={{ width: "400px" }}>
+                <div className="modal-header">
+                  <button className="close-btn" onClick={closeModal}>X</button>
                 </div>
-              )}
-              {(mode === 'delete' && adminApplications.length > 0) && (
-                <div className='modal-block-app'>
-                  <select value={selectedApp} onChange={(e) => setSelectedApp(e.target.value)}>
-                    {adminApplications.map(app => (
-                      <option key={app.appName} value={app.appName}>{app.appName}</option>
+                <div className='modal-content'>
+                  <span>Manage Applications</span>
+                  <div className='button-block'>
+                    <button
+                      onClick={() => toggleMode('add')}
+                      className={`mode-button ${mode === 'add' ? 'green' : ''}`}
+                    >Add</button>
+                    <button
+                      onClick={() => toggleMode('delete')}
+                      className={`mode-button ${mode === 'delete' ? 'red' : ''}`}
+                    >Delete</button>
+                  </div>
+                  {(mode === 'add' || adminApplications.length < 1) && (
+                    <div className='modal-block-app'>
+                      <input
+                        type="text"
+                        value={newAppName}
+                        onChange={(e) => setNewAppName(e.target.value)}
+                        maxLength="3"
+                        placeholder='APP...'
+                        style={{ textTransform: "uppercase" }}
+                      />
+                      <div className='arrow-up-button' onClick={addApp}>
+                        <FontAwesomeIcon fontSize={29} width={50} height={50} icon={faCircleUp} />
+                      </div>
+                    </div>
+                  )}
+                  {(mode === 'delete' && adminApplications.length > 0) && (
+                    <div className='modal-block-app'>
+                      <select value={selectedApp} onChange={(e) => setSelectedApp(e.target.value)}>
+                        {adminApplications.map(app => (
+                          <option key={app.appName} value={app.appName}>{app.appName}</option>
+                        ))}
+                      </select>
+                      <div className='trash-button' onClick={deleteApp}>
+                        <FontAwesomeIcon fontSize={25} width={50} height={50} icon={faTrash} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* User Management Modal */}
+          {isModalBOpen && (
+            <div className="modal-overlay">
+              <div className="modal">
+                <div className="modal-header">
+
+                  <button className="close-btn" onClick={closeModal}>X</button>
+                </div>
+                <div className='modal-content'>
+                  <span>Manage User</span>
+
+                  <select id="accountswitcher" required onChange={(e) => setUserID(parseInt(e.target.value))}>
+                    {users.map((user, index) => (
+                      <option key={index} value={user.uid}>User: {user.uid}</option>
                     ))}
                   </select>
-                  <div className='trash-button' onClick={deleteApp}>
-                    <FontAwesomeIcon fontSize={25} width={50} height={50} icon={faTrash} />
+
+                  <div className='modal-block'>
+                    <select id="removeapp" required onChange={(e) => setRemovePrimedApplication(e.target.value)}>
+                      {users[selectedUser].applications.map((application, index) => (
+                        <option key={index} value={application}>{application}</option>
+                      ))}
+                    </select>
+                    <button style={{ backgroundColor: 'red' }} onClick={() => { handleRemoveUser() }}>Remove</button>
                   </div>
+                  {unusedApps.length > 0 && (
+                    <div className='modal-block'>
+                      <select id="addapp" required onChange={(e) => setAddPrimedApplication(e.target.value)}>
+                        {unusedApps.map((application, index) => (
+                          <option key={index} value={application.appName}>{application.appName}</option>
+                        ))}
+                      </select>
+                      <button style={{ paddingLeft: '44px', paddingRight: '41px' }} onClick={() => { handleAddUser() }}>Add</button>
+                    </div>
+                  )}
+
                 </div>
-              )}
+
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* User Management Modal */}
-      {isModalBOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
+          {/* Add Server Modal */}
+          {isModalOpen && (
+            <div className="modal-overlay">
+              <div className="modal" >
+                <div className="modal-header">
 
-              <button className="close-btn" onClick={closeModal}>X</button>
+                  <button className="close-btn" onClick={closeModal}>X</button>
+                </div>
+                <div className='modal-content'>
+                  <span>Server Information</span>
+                  <form onSubmit={handleAddServer}>
+                    <select required onChange={(e) => setNewServerApplication(e.target.value)}>
+                      {applications.map((application, index) => (
+                        <option key={index} value={application.appName}>{application.appName}</option>
+                      ))}
+                    </select>
+                    <input type="text" placeholder="Destination hostname" required onChange={(e) => setDestinationHostname(e.target.value)} />
+                    <input type="text" placeholder="Destination IP" required onChange={(e) => setDestinationIP(e.target.value)} />
+                    <input type="text" placeholder="Destination Port" required onChange={(e) => setDestinationPort(e.target.value)} />
+                    <input type="text" placeholder="Source Hostname" required onChange={(e) => setSourceHostname(e.target.value)} />
+                    <input type="text" placeholder="Source IP" required onChange={(e) => setSourceIp(e.target.value)} />
+                    <button type="submit" className="add-btn">Add</button>
+                  </form>
+                </div>
+
+              </div>
             </div>
-            <div className='modal-content'>
-              <span>Manage User</span>
+          )}
 
-              <select id="accountswitcher" required onChange={(e) => setUserID(parseInt(e.target.value))}>
-                {users.map((user, index) => (
-                  <option key={index} value={user.uid}>User: {user.uid}</option>
-                ))}
+          <main className={isSidebarOpen ? 'content blur' : 'content'}>
+            <div className="search-area">
+              <select value={searchCriteria} onChange={(e) => setSearchCriteria(e.target.value)}>
+                <option value="" selected>Search by</option>
+                <option value="hostname">Hostname</option>
+                <option value="hostIp">Host IP</option>
+                <option value="sourceHostname">Source Hostname</option>
+                <option value="sourceIp">Source IP</option>
+                <option value="app">Application Name</option>
+                {/* Add more criteria as needed */}
               </select>
-
-              <div className='modal-block'>
-                <select id="removeapp" required onChange={(e) => setRemovePrimedApplication(e.target.value)}>
-                  {users[selectedUser].applications.map((application, index) => (
-                    <option key={index} value={application}>{application}</option>
-                  ))}
+              <input
+                type="text"
+                placeholder="server..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <div className="sort-area">
+                <select value={sortAttribute} onChange={(e) => setSortAttribute(e.target.value)}>
+                  <option value="" selected>Sort by</option>
+                  <option value="name">Hostname</option>
+                  <option value="ip">Host IP</option>
+                  <option value="sourceName">Source Hostname</option>
+                  <option value="sourceIP">Source IP</option>
+                  <option value="application">Application Name</option>
+                  {/* Add more sorting attributes as needed */}
                 </select>
-                <button style={{ backgroundColor: 'red' }} onClick={() => { handleRemoveUser() }}>Remove</button>
+                <button
+                  onClick={() => setSortDirection(sortDirection === 1 ? -1 : sortDirection + 1)}
+                  className={`sort-button ${sortDirection === 1 ? 'green' : sortDirection === -1 ? 'red' : ''}`}
+                >
+                  {sortDirection === 0 ? "-" : sortDirection === 1 ? "↑" : "↓"}
+                </button>
               </div>
-              {unusedApps.length > 0 && (
-                <div className='modal-block'>
-                  <select id="addapp" required onChange={(e) => setAddPrimedApplication(e.target.value)}>
-                    {unusedApps.map((application, index) => (
-                      <option key={index} value={application.appName}>{application.appName}</option>
-                    ))}
-                  </select>
-                  <button style={{ paddingLeft: '44px', paddingRight: '41px' }} onClick={() => { handleAddUser() }}>Add</button>
-                </div>
-              )}
-
             </div>
 
-          </div>
-        </div>
+            {servers.length > 0 ? (
+
+              sortedServers.filter(server => {
+                if (!searchQuery) return true; // If no query, don't filter out anything
+                const regex = new RegExp(searchQuery, 'i'); // Case insensitive search
+                switch (searchCriteria) {
+                  case 'hostname':
+                    return regex.test(server.name);
+                  case 'hostIp':
+                    return regex.test(server.ip);
+                  case 'sourceIp':
+                    return regex.test(server.sourceIP);
+                  case 'soureHostname':
+                    return regex.test(server.sourceName);
+                  case 'app':
+                    return regex.test(server.application);
+                  // Add more cases for different criteria later
+                  default:
+                    return true;
+                }
+              }).map(server => (
+                <ServerItem key={server.id} server={server} onDelete={deleteServer} onUpdate={updateServer} applications={applications} />
+              ))
+
+            ) : (
+              <div className="no-servers">Looks like there's nothing here yet...</div>
+            )}
+          </main>
+        </>
       )}
-
-      {/* Add Server Modal */}
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal" >
-            <div className="modal-header">
-
-              <button className="close-btn" onClick={closeModal}>X</button>
-            </div>
-            <div className='modal-content'>
-              <span>Server Information</span>
-              <form onSubmit={handleAddServer}>
-                <select required onChange={(e) => setNewServerApplication(e.target.value)}>
-                  {applications.map((application, index) => (
-                    <option key={index} value={application.appName}>{application.appName}</option>
-                  ))}
-                </select>
-                <input type="text" placeholder="Destination hostname" required onChange={(e) => setDestinationHostname(e.target.value)} />
-                <input type="text" placeholder="Destination IP" required onChange={(e) => setDestinationIP(e.target.value)} />
-                <input type="text" placeholder="Destination Port" required onChange={(e) => setDestinationPort(e.target.value)} />
-                <input type="text" placeholder="Source Hostname" required onChange={(e) => setSourceHostname(e.target.value)} />
-                <input type="text" placeholder="Source IP" required onChange={(e) => setSourceIp(e.target.value)} />
-                <button type="submit" className="add-btn">Add</button>
-              </form>
-            </div>
-
-          </div>
-        </div>
-      )}
-
-      <main className={isSidebarOpen ? 'content blur' : 'content'}>
-        <div className="search-area">
-          <select value={searchCriteria} onChange={(e) => setSearchCriteria(e.target.value)}>
-            <option value="" selected>Search by</option>
-            <option value="hostname">Hostname</option>
-            <option value="hostIp">Host IP</option>
-            <option value="sourceHostname">Source Hostname</option>
-            <option value="sourceIp">Source IP</option>
-            <option value="app">Application Name</option>
-            {/* Add more criteria as needed */}
-          </select>
-          <input
-            type="text"
-            placeholder="server..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <div className="sort-area">
-            <select value={sortAttribute} onChange={(e) => setSortAttribute(e.target.value)}>
-              <option value="" selected>Sort by</option>
-              <option value="name">Hostname</option>
-              <option value="ip">Host IP</option>
-              <option value="sourceName">Source Hostname</option>
-              <option value="sourceIP">Source IP</option>
-              <option value="application">Application Name</option>
-              {/* Add more sorting attributes as needed */}
-            </select>
-            <button
-              onClick={() => setSortDirection(sortDirection === 1 ? -1 : sortDirection + 1)}
-              className={`sort-button ${sortDirection === 1 ? 'green' : sortDirection === -1 ? 'red' : ''}`}
-            >
-              {sortDirection === 0 ? "-" : sortDirection === 1 ? "↑" : "↓"}
-            </button>
-          </div>
-        </div>
-
-        {servers.length > 0 ? (
-
-          sortedServers.filter(server => {
-            if (!searchQuery) return true; // If no query, don't filter out anything
-            const regex = new RegExp(searchQuery, 'i'); // Case insensitive search
-            switch (searchCriteria) {
-              case 'hostname':
-                return regex.test(server.name);
-              case 'hostIp':
-                return regex.test(server.ip);
-              case 'sourceIp':
-                return regex.test(server.sourceIP);
-              case 'soureHostname':
-                return regex.test(server.sourceName);
-              case 'app':
-                return regex.test(server.application);
-              // Add more cases for different criteria later
-              default:
-                return true;
-            }
-          }).map(server => (
-            <ServerItem key={server.id} server={server} onDelete={deleteServer} onUpdate={updateServer} applications={applications} />
-          ))
-
-        ) : (
-          <div className="no-servers">Looks like there's nothing here yet...</div>
-        )}
-      </main>
     </div>
   );
 }
