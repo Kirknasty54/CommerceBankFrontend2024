@@ -38,14 +38,18 @@ function Login() {
       }
     } else if (action === 'register') {
       const response = await RequestHandler('check', { username: username })
+      console.log(response.exists)
+      console.log("REGISTER WAS CLICKED FUCK FACE");
+      console.log("Response from request handler ", response)
 
       if (!response.exists) {
-        setError('Looks like you are already a user');
-      } else {
+        console.log("USERNAME DOESNT EXIST YOU FUCKING MORON")
         navigate('/register')
+      } else {
+        console.log("USERNAME ALREADY EXISTS YOU FUCKING DUMBASS");
+        setError('Looks like you are already a user');
       }
     }
-
   };
 
   //const handleRegisterClick = () => {
