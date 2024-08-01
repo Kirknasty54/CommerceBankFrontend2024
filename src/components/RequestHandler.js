@@ -9,32 +9,6 @@ const isMock = false;
 async function RequestHandler(route, data) {
 
   switch (route) {
-
-    case 'auth':
-      if (!isMock) {
-        if (data.username === 'user' && data.password === 'pass') {
-          return { uid: 2, authenticated: true, admin: false, applications: [{ appId: 1, appName: 'API' }, { appId: 3, appName: 'RFS' }, { appId: 5, appName: 'INF' }, { appId: 6, appName: 'TCS' }] }
-        }
-
-        else if (data.username === 'admin' && data.password === 'root') {
-          return { uid: 1, authenticated: true, admin: true, applications: [{ appId: 1, appName: 'API' }, { appId: 2, appName: 'PUP' }, { appId: 3, appName: 'RFS' }, { appId: 4, appName: 'TBD' }, { appId: 5, appName: 'INF' }, { appId: 6, appName: 'TCS' }, { appId: 7, appName: 'MQS' }] }
-        } else
-          return { authenticated: false, isAdmin: false, applications: [] }
-
-      } else {
-        const response = await axios.post('http://localhost:8080/api/v1/users/auth', {
-          username: data.username,
-          password: data.password
-        });
-
-        let finalApps = []
-        for (let i of Object.keys(response.data.applications)) {
-          finalApps.push({ appId: parseInt(i), appName: response.data.applications[i] })
-        }
-
-        return { ...response.data, applications: finalApps }
-      }
-
     case 'check':
       if (!isMock) {
         console.log("check username shitbird:", data.username);
@@ -48,15 +22,42 @@ async function RequestHandler(route, data) {
         return { exists: data.username === 'mockUser' };
       }
 
+    case 'auth':
+      if (!isMock) {
+        //if (data.username === 'user' && data.password === 'pass') {
+        // return { uid: 2, authenticated: true, admin: false, applications: [{ appId: 1, appName: 'API' }, { appId: 3, appName: 'RFS' }, { appId: 5, appName: 'INF' }, { appId: 6, appName: 'TCS' }] }
+        //}
+
+        //else if (data.username === 'admin' && data.password === 'root') {
+        // return { uid: 1, authenticated: true, admin: true, applications: [{ appId: 1, appName: 'API' }, { appId: 2, appName: 'PUP' }, { appId: 3, appName: 'RFS' }, { appId: 4, appName: 'TBD' }, { appId: 5, appName: 'INF' }, { appId: 6, appName: 'TCS' }, { appId: 7, appName: 'MQS' }] }
+        //} else
+        //   return { authenticated: false, isAdmin: false, applications: [] }
+
+        //} else {
+        const response = await axios.post('http://localhost:8080/api/v1/users/auth', {
+          username: data.username,
+          password: data.password
+        });
+
+        let finalApps = []
+        for (let i of Object.keys(response.data.applications)) {
+          finalApps.push({ appId: parseInt(i), appName: response.data.applications[i] })
+        }
+
+        console.log(response.username)
+        console.log(response.authenticated)
+        return { ...response.data, applications: finalApps }
+      }
+
     case 'servers':
       if (!isMock) {
-        return {
+        /*return {
           servers: [
             { id: 1709250097200, name: 'Puppet Service', application: 'PUP', ip: '192.168.20.1', ipstatus: true, port: 8000, sourceIP: '127.0.0.1', sourceName: 'PUPHost' },
             { id: 1709250104457, name: 'Files Now', application: 'RFS', ip: '192.168.1.1', ipstatus: false, port: 8080, sourceIP: '10.0.0.1', sourceName: 'RFSHost' }
           ]
         }
-      } else {
+      } else {*/
 
         if (data.isAdmin) {
           const response = await axios.get(`http://localhost:8080/api/v1/servers`);

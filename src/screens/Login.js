@@ -25,6 +25,7 @@ function Login() {
 
     if (action === 'login') {
       const response = await RequestHandler('auth', { username: username, password: password })
+      console.log(response.authenticated)
 
       if (response.authenticated) {
         localStorage.setItem('session', `${response.uid}`);
@@ -38,9 +39,8 @@ function Login() {
       }
     } else if (action === 'register') {
       const response = await RequestHandler('check', { username: username })
-      console.log(response.exists)
+      console.log(response)
       console.log("REGISTER WAS CLICKED FUCK FACE");
-      console.log("Response from request handler ", response)
 
       if (!response.exists) {
         console.log("USERNAME DOESNT EXIST YOU FUCKING MORON")
@@ -50,6 +50,7 @@ function Login() {
         setError('Looks like you are already a user');
       }
     }
+
   };
 
   //const handleRegisterClick = () => {
