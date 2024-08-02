@@ -36,3 +36,30 @@
   padding-right: 10px;
   cursor: pointer;
 }
+
+.register-text{
+  margin-top: -4px;
+  margin-bottom: -1px;
+}
+
+.register-container{
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.3);
+    width: 300px;
+    font-family: "Abhaya Libre", serif;
+    font-size: 22px
+}
+
+.input-group input{
+  width: 100%;
+  padding: 15px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin: 10px 0;
+  margin-top: 25px;
+  background-color: #ebebeb;
+  border: none;
+  border-right: 4px;
+}
