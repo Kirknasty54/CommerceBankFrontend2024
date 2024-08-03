@@ -91,6 +91,8 @@ function Login() {
           <button type="submit" name="register" className="register-button">Register</button>
         </form>
       </div>
+      {/* Secret le funny video link */}
+      <a href='/video' target="_blank" rel="noopener noreferrer" className='secret-link'>Secret Video</a>
     </div>
   );
 }

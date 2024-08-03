@@ -106,3 +106,16 @@
     margin-bottom: -1px;
     font-size: 15px;
 }
+
+.secret-link{
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  font-size: 0.8em;
+  color: transparent; 
+  text-decoration: none;
+}
+
+.secret-link:hover{
+  color: blue
+}

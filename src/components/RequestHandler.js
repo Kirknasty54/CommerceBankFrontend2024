@@ -22,6 +22,19 @@ async function RequestHandler(route, data) {
         return { exists: data.username === 'mockUser' };
       }
 
+    case 'registerSendRequest':
+      if (!isMock) {
+        console.log();
+        const response = await axios.post('http://localhost:8080/api/v1/users/registerSendRequest', {
+          username: data.username
+        });
+        console.log('response from back: ', response);
+        return response.data
+      } else {
+        return { exists: data.username === 'mockUser' }
+      }
+
+
     case 'auth':
       if (!isMock) {
         //if (data.username === 'user' && data.password === 'pass') {

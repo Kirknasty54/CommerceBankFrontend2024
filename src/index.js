@@ -5,6 +5,7 @@ import './styles/index.css';
 import Dashboard from './screens/Dashboard';
 import Login from './screens/Login';
 import Register from './screens/Register.js'
+import VideoPage from './screens/VideoPage'
 import {
   createBrowserRouter,
   RouterProvider,
@@ -21,7 +22,11 @@ const router = createBrowserRouter([
   },
   {
     path: "register",
-    element: <Register/>
+    element: <Register />
+  },
+  {
+    path: "video",
+    element: <VideoPage />
   }
 ]);
 

@@ -26,6 +26,16 @@ function Register() {
       setError('Please enter a valid email address.')
       return
     }
+    const response = await RequestHandler('registerSendRequest', { username: username })
+    console.log(response)
+
+    if (!response.exists) {
+      console.log("USERNAME DOESNT EXIST YOU FUCKING MORON")
+      navigate('/register')
+    } else {
+      console.log("USERNAME ALREADY EXISTS YOU FUCKING DUMBASS");
+      setError('Looks like you are already a user');
+    }
   }
 
   return (
